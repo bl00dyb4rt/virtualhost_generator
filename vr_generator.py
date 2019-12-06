@@ -30,12 +30,21 @@ class VirtualHost:
         serveralias = args.serveralias
         path_dir = args.path
         port = args.port
-        virtual = self.content_vh(documentroot, servername, serveralias, path_dir, port)
-        for key, value in virtual.items():
-            print(value)
+        virtual_info = self.content_vh(documentroot, servername, serveralias, path_dir, port)
+        # for key, value in virtual_info.items():
+        #     print(value)
+        self.create_file(path_dir,virtual_info)
 
-    def create_file(self):
-        pass
+    def create_file(self, path, virtual_info):
+        try:
+            with open(path, 'w') as f:
+                web_browsers = [virtual_info]
+                for key, value in virtual_info.items():
+                    f.writelines("%s\n" % line for line in web_browsers)
+
+
+        except Exception as e:
+            return print(str(e))
 
     def content_vh(self, documentroot, servername, serveralias, path_dir, port):
         list_content = {}
@@ -43,9 +52,9 @@ class VirtualHost:
             list_content['open'] = 'Listen: 80'
         else:
             list_content['open'] = 'Listen: ' + str(port)
-        list_content['virtual_host'] = '<VirtualHost *:' + str(port) + '>'
-        list_content['documentroot'] = 'DocumentRoot ' + str(documentroot)
-        list_content['servername'] = 'ServerName ' + str(servername)
+            list_content['virtual_host'] = '<VirtualHost *:' + str(port) + '>'
+            list_content['documentroot'] = 'DocumentRoot ' + str(documentroot)
+            list_content['servername'] = 'ServerName ' + str(servername)
         if serveralias is None:
             list_content['serveralias'] = 'ServerAlias ' + str(servername)
         else:
